@@ -1,31 +1,32 @@
 <?php
 
 namespace App\Services;
+use App\Repositories\SalesRepositotyInterface;
+use App\Services\DTO\CreateSalesDTO;
 use stdClass;
 
 class SalesService
 {
 
-    public function __construct()
-    {
-
-    }
+    public function __construct(
+        protected SalesRepositotyInterface $repositoty
+    ) {}
 
     public function getAll(string $filter = null): array
     {
-        return $this->repository->getAll($filter);
+        return $this->repositoty->getAll($filter);
     }
 
     public function findOne(string $id): stdClass|null
     {
-        return $this->repository->findOne($id);
+        return $this->repositoty->findOne($id);
     }
 
     public function new(
-        array $products
+        CreateSalesDTO $DTO
     ): stdClass
     {
-        return $this->repository->new($products);
+        return $this->repositoty->new($DTO);
     }
 
 }

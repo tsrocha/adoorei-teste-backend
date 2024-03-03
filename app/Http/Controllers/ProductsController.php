@@ -3,11 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Products;
+use App\Services\ProductsService;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Http\Request;
 
 class ProductsController extends Controller
 {
+
+    public function __construct(
+        protected ProductsService $service
+    ) {}
+
     /**
      * List of products available
      */
@@ -15,7 +21,7 @@ class ProductsController extends Controller
     {
         try
         {
-            $products = Products::all();
+            $products = $this->service->getAll($request->filter);
             return response()->json(['products' => $products]);
         }
         catch (RequestException $exception)
