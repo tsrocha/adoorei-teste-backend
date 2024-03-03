@@ -15,16 +15,30 @@ class SalesEloquentORM implements SalesRepositotyInterface
 
     public function getAll(): array
     {
-        return $this->model->all()->toArray();
+        return $this->model->with('sale')->get()->toArray();
     }
     public function findOne(string $id): stdClass|null
     {
-        return $this->model->where('id', '=', $id)->get();
+        $sale = $this->model->with('sale')->find($id);
+        if(!$sale) {
+            return null;
+        }
+
+        return (object) $sale->toArray();
     }
+
+    public function delete(string $id): void
+    {
+        $sale = $this->model->findOrFail($id);
+        $sale->delete();
+    }
+
 
     public function new(CreateSalesDTO $DTO): stdClass
     {
-        
+
     }
+
+
 
 }

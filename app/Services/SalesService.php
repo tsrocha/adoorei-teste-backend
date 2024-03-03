@@ -29,4 +29,9 @@ class SalesService
         return $this->repositoty->new($DTO);
     }
 
+    public function delete(string $id): void
+    {
+        $this->repository->delete($id);
+    }
+
 }

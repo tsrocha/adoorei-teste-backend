@@ -35,7 +35,12 @@ class SalesController extends Controller
      */
     public function store(Request $request)
     {
-        $this->service->new(CreateSalesDTO::makeFromRequest($request));
+        try {
+            $sale = $this->service->new(CreateSalesDTO::makeFromRequest($request));
+            return response()->json(['sale' => $sale]);
+        } catch (RequestException $exception) {
+            return response()->json(['msg' => $exception->getMessage()], $exception->getCode());
+        }
     }
 
     /**
@@ -47,6 +52,19 @@ class SalesController extends Controller
         {
             $sales = $this->service->findOne($id);
             return response()->json($sales);
+        }
+        catch (RequestException $exception)
+        {
+            return response()->json(['msg' => $exception->getMessage()], $exception->getCode());
+        }
+    }
+
+    public function delete($id)
+    {
+        try
+        {
+            $sale = $this->service->delete($id);
+            return response()->json($sale);
         }
         catch (RequestException $exception)
         {

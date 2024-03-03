@@ -8,4 +8,5 @@ interface SalesRepositotyInterface
     public function getAll(): array;
     public function findOne(string $id): stdClass|null;
     public function new(CreateSalesDTO $DTO): stdClass;
+    public function delete(string $id): void;
 }

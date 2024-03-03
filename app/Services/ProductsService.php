@@ -2,16 +2,17 @@
 
 namespace App\Services;
 
+use App\Repositories\ProductsRepositoryInterface;
+
 class ProductsService
 {
-    public function __construct()
-    {
-
-    }
+    public function __construct(
+        protected ProductsRepositoryInterface $repositoty
+    ) {}
 
     public function getAll(string $filter = null): array
     {
-        return $this->repository->getAll($filter);
+        return $this->repositoty->getAll($filter);
     }
 
 
