@@ -9,11 +9,13 @@ class Sales extends Model
 {
     use HasFactory;
 
-    protected $table = 'sales';
+    protected     $table   = 'sales';
+    protected     $guarded = [];
+    protected     $hidden  = [];
 
-    public function sale()
+    public function products()
     {
-        return $this->hasOne(SalesHasProducts::class, 'sales_id','id')->with('products');
+        return $this->hasMany(ProductsSale::class, 'sales_id', 'id');
     }
 
 }

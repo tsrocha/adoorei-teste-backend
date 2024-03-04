@@ -4,7 +4,7 @@ namespace App\Services\DTO;
 
 use Illuminate\Support\Facades\Request;
 
-class CreateSalesDTO
+class UpdateSalesDTO
 {
     public function __construct(
         public array $product

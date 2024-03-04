@@ -3,6 +3,7 @@
 namespace App\Services;
 use App\Repositories\SalesRepositotyInterface;
 use App\Services\DTO\CreateSalesDTO;
+use App\Services\DTO\UpdateSalesDTO;
 use stdClass;
 
 class SalesService
@@ -29,9 +30,17 @@ class SalesService
         return $this->repositoty->new($DTO);
     }
 
+    public function update(
+        string $id,
+        UpdateSalesDTO $DTO
+    ): stdClass
+    {
+        return $this->repositoty->update($id, $DTO);
+    }
+
     public function delete(string $id): void
     {
-        $this->repository->delete($id);
+        $this->repositoty->delete($id);
     }
 
 }
