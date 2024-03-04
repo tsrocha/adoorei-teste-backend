@@ -4,7 +4,11 @@ namespace App\Repositories;
 use App\Models\Products;
 use App\Models\ProductsSale;
 use App\Models\Sales;
+use App\Services\DTO\CreateProductsSaleDTO;
+use App\Services\DTO\UpdateProductsSaleDTO;
 use App\Services\DTO\UpdateSalesDTO;
+use App\Services\ProductsSaleService;
+use App\Services\ProductsService;
 use stdClass;
 use App\Services\DTO\CreateSalesDTO;
 
@@ -12,8 +16,8 @@ class SalesEloquentORM implements SalesRepositotyInterface
 {
     public function __construct(
         protected Sales $model,
-        protected Products $products,
-        protected ProductsSale $productsSale
+        protected ProductsService $products,
+        protected ProductsSaleService $productsSale
     ) {}
 
     public function getAll(): array
@@ -44,35 +48,32 @@ class SalesEloquentORM implements SalesRepositotyInterface
         foreach ($DTO->product as $key => $quantity)
         {
 
-            $product = $this->products->find($key);
+            $product = $this->products->findOne($key);
             $price = $product->price * $quantity;
             $total = $total + $price;
 
-            $productSale = $this->productsSale->where('product_id', '=', $product->id)
-                ->where('sales_id', '=', $sale->id)
-                ->first();
+            $productSale = $this->productsSale->findOne($product->id, $sale->id);
 
             if(isset($productSale->id)) {
-                $productSale->update([
-                    'amount' => $quantity,
-                    'price' => $price
-                ]);
+                $this->productsSale->update($productSale->id, UpdateProductsSaleDTO::makeFromRequest([
+                    'price' => $price,
+                    'amount' => $quantity
+                ]));
             } else {
-                $this->productsSale->create([
+                $this->productsSale->new(CreateProductsSaleDTO::makeFromRequest([
                     'product_id' => $product->id,
                     'sales_id' => $id,
                     'name' => $product->description,
                     'amount' => $quantity,
                     'price' => $price
-                ]);
+                ]));
+
             }
 
         }
 
-        $totalSales = ProductsSale::where('sales_id', '=', $sale->id)->sum('price');
-
         $sale->update([
-            'amount' => $totalSales
+            'amount' => $this->productsSale->getSum($sale->id)
         ]);
 
         return (object) $sale->toArray();
@@ -90,17 +91,17 @@ class SalesEloquentORM implements SalesRepositotyInterface
        foreach ($DTO->product as $key => $quantity)
        {
 
-           $product = $this->products->find($key);
+           $product = $this->products->findOne($key);
            $price = $product->price * $quantity;
            $total = $total + $price;
 
-           $this->productsSale->create([
+           $this->productsSale->new(CreateProductsSaleDTO::makeFromRequest([
                'product_id' => $product->id,
                'sales_id' => $sale->id,
                'name' => $product->description,
                'amount' => $quantity,
                'price' => $price
-           ]);
+           ]));
 
        }
 
